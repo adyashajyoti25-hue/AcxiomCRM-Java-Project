@@ -1,0 +1,227 @@
+@inject AcxiomCRM.Application.Interfaces.ICurrentUserService CurrentUser
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AcxiomCRM Enterprise</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div id="crm-wrapper">
+            <!-- Sidebar -->
+            <aside id="crm-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-brand-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <div class="sidebar-brand-text">AcxiomCRM</div>
+                        <small style="font-size: 0.68rem; color: #64748b; letter-spacing: 0.05em;">ENTERPRISE EDITION</small>
+                    </div>
+                </div>
+
+                <div class="sidebar-nav">
+                    <div class="nav-section-title">Overview</div>
+                    <a asp-controller="Dashboard" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <i class="bi bi-grid-1x2"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <div class="nav-section-title">Sales & CRM</div>
+                    <a asp-controller="Customer" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customer" ? "active" : "")">
+                        <i class="bi bi-people"></i>
+                        <span>Customers</span>
+                    </a>
+                    <a asp-controller="Lead" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lead" ? "active" : "")">
+                        <i class="bi bi-funnel"></i>
+                        <span>Leads</span>
+                    </a>
+                    <a asp-controller="Opportunity" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Opportunity" ? "active" : "")">
+                        <i class="bi bi-briefcase"></i>
+                        <span>Opportunities</span>
+                    </a>
+
+                    <div class="nav-section-title">Engagement</div>
+                    <a asp-controller="FollowUp" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FollowUp" ? "active" : "")">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Follow-Ups</span>
+                    </a>
+                    <a asp-controller="Activity" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Activity" ? "active" : "")">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Activities</span>
+                    </a>
+
+                    <div class="nav-section-title">Analytics</div>
+                    <a asp-controller="Report" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Reports Hub</span>
+                    </a>
+
+                    @if (CurrentUser.IsAdmin)
+                    {
+                        <div class="nav-section-title">Administration</div>
+                        <a asp-controller="User" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Users & Roles</span>
+                        </a>
+                        <a asp-controller="Audit" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Audit" ? "active" : "")">
+                            <i class="bi bi-journal-text"></i>
+                            <span>Audit Logs</span>
+                        </a>
+                    }
+
+                    <div class="nav-section-title">Integration</div>
+                    <a href="/swagger" target="_blank" class="sidebar-link">
+                        <i class="bi bi-code-slash"></i>
+                        <span>REST API (Swagger)</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="user-badge">
+                        <div class="avatar-initial">
+                            @(CurrentUser.Email?.Substring(0, 1).ToUpper() ?? "U")
+                        </div>
+                        <div class="text-truncate" style="flex: 1;">
+                            <div class="fw-semibold text-white text-truncate" style="font-size: 0.85rem;">@CurrentUser.Email</div>
+                            <span class="badge bg-primary bg-opacity-25 text-info" style="font-size: 0.7rem;">@CurrentUser.Role</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div id="crm-main-content">
+                <!-- Top Navigation Bar -->
+                <header class="crm-topbar">
+                    <div class="topbar-left">
+                        <button type="button" class="btn btn-sm btn-light border" id="sidebarToggleBtn" title="Toggle Navigation">
+                            <i class="bi bi-list fs-5"></i>
+                        </button>
+                        <form asp-controller="Search" asp-action="Index" method="get" class="d-none d-md-block">
+                            <div class="topbar-search">
+                                <i class="bi bi-search"></i>
+                                <input type="text" name="q" class="form-control form-control-sm" placeholder="Search customers, leads, opportunities..." value="@ViewBag.Query" />
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Quick Add Menu -->
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-plus-lg"></i>
+                                <span class="d-none d-sm-inline">Quick Add</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li><a class="dropdown-item" asp-controller="Customer" asp-action="Create"><i class="bi bi-person-plus me-2 text-primary"></i>New Customer</a></li>
+                                <li><a class="dropdown-item" asp-controller="Lead" asp-action="Create"><i class="bi bi-funnel me-2 text-success"></i>New Lead</a></li>
+                                <li><a class="dropdown-item" asp-controller="Opportunity" asp-action="Create"><i class="bi bi-briefcase me-2 text-warning"></i>New Opportunity</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="FollowUp" asp-action="Create"><i class="bi bi-calendar-plus me-2 text-info"></i>Schedule Follow-Up</a></li>
+                                <li><a class="dropdown-item" asp-controller="Activity" asp-action="Create"><i class="bi bi-clock-history me-2 text-secondary"></i>Log Activity</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- User Profile Menu -->
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" data-bs-toggle="dropdown">
+                                <div class="avatar-initial me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                    @(CurrentUser.Email?.Substring(0, 1).ToUpper() ?? "U")
+                                </div>
+                                <span class="fw-medium d-none d-md-inline" style="font-size: 0.875rem;">@CurrentUser.Email</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li class="px-3 py-2 border-bottom">
+                                    <div class="fw-bold" style="font-size: 0.85rem;">@CurrentUser.Email</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Role: @CurrentUser.Role</div>
+                                </li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="px-2">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Page Body -->
+                <main class="crm-page-body">
+                    <!-- Notifications Banner -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill fs-5"></i>
+                            <div>@TempData["SuccessMessage"]</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                            <div>@TempData["ErrorMessage"]</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @RenderBody()
+                </main>
+
+                <!-- Footer -->
+                <footer class="crm-footer">
+                    <div>&copy; @DateTime.UtcNow.Year AcxiomCRM Enterprise Application. All rights reserved.</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-success bg-opacity-10 text-success"><i class="bi bi-database-check me-1"></i>Database: Active</span>
+                        <a href="/swagger" class="text-decoration-none text-muted" target="_blank"><i class="bi bi-book me-1"></i>API Docs</a>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Anonymous View (Login/Register/Access Denied) -->
+        <div class="min-vh-100 d-flex flex-column justify-content-center py-4 bg-light">
+            <div class="container">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mx-auto mb-3" style="max-width: 480px;" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @RenderBody()
+            </div>
+            <div class="text-center text-muted mt-4" style="font-size: 0.85rem;">
+                &copy; @DateTime.UtcNow.Year AcxiomCRM Enterprise &bull; Secure Authentication
+            </div>
+        </div>
+    }
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

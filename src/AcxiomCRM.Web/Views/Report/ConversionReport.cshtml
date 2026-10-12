@@ -1,0 +1,79 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Lead Conversion Report";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Lead Conversion & Outcome Report</h3>
+        <p class="text-muted small mb-0">Conversion efficiency, funnel drop-off, and channel performance metrics</p>
+    </div>
+    <a asp-action="Index" class="btn btn-sm btn-light border">Back to Hub</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="kpi-card text-center">
+            <div class="kpi-title">Total Leads</div>
+            <div class="kpi-value text-primary">@Model.TotalLeads</div>
+            <div class="small text-muted">All Inbound Captures</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card text-center">
+            <div class="kpi-title">Converted Leads</div>
+            <div class="kpi-value text-success">@Model.ConvertedLeads</div>
+            <div class="small text-muted">Won Customer Master Accounts</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card text-center">
+            <div class="kpi-title">Lost / Disqualified</div>
+            <div class="kpi-value text-danger">@Model.LostLeads</div>
+            <div class="small text-muted">Closed Out of Funnel</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="kpi-card text-center">
+            <div class="kpi-title">Conversion Rate</div>
+            <div class="kpi-value text-info">@Model.ConversionRate%</div>
+            <div class="small text-muted">Efficiency Percentage</div>
+        </div>
+    </div>
+</div>
+
+<div class="crm-card">
+    <div class="crm-card-header">
+        <h5 class="crm-card-title"><i class="bi bi-funnel me-2 text-primary"></i>Conversion Breakdown by Lead Source</h5>
+    </div>
+    <div class="crm-card-body p-0">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Marketing Channel / Source</th>
+                    <th>Total Captured</th>
+                    <th>Converted</th>
+                    <th>Channel Conversion Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var src in Model.BySource)
+                {
+                    <tr>
+                        <td><span class="badge bg-light text-dark border">@src.Source</span></td>
+                        <td class="fw-semibold">@src.Total</td>
+                        <td class="text-success fw-bold">@src.Converted</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-fill" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: @(src.ConversionRate)%"></div>
+                                </div>
+                                <span class="small fw-semibold">@src.ConversionRate%</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

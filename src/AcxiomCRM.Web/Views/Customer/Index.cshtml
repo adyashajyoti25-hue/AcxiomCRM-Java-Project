@@ -1,0 +1,125 @@
+@model AcxiomCRM.Application.DTOs.PagedResult<AcxiomCRM.Application.DTOs.CustomerDto>
+@{
+    ViewData["Title"] = "Customer Management";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Customers</h3>
+        <p class="text-muted small mb-0">Master account directory, contact coordinates, and relationship status</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+        </a>
+    </div>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="crm-card mb-4">
+    <div class="crm-card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search by name, code, email, phone, company..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Statuses</option>
+                    <option value="Active" selected="@(ViewBag.Status == "Active")">Active</option>
+                    <option value="Inactive" selected="@(ViewBag.Status == "Inactive")">Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-filter me-1"></i>Filter</button>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Data Table Card -->
+<div class="crm-card">
+    <div class="crm-card-body p-0">
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Customer Name</th>
+                            <th>Contact Info</th>
+                            <th>Company / City</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th>Pipeline</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.Items)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">@c.CustomerCode</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@c.CustomerId" class="fw-semibold text-dark text-decoration-none">
+                                        @c.CustomerName
+                                    </a>
+                                </td>
+                                <td>
+                                    <div><i class="bi bi-envelope text-muted me-1"></i><small>@c.Email</small></div>
+                                    <div><i class="bi bi-telephone text-muted me-1"></i><small>@c.Phone</small></div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">@(c.CompanyName ?? "-")</div>
+                                    <small class="text-muted">@(c.City != null ? $"{c.City}, {c.State}" : "-")</small>
+                                </td>
+                                <td>
+                                    <span class="badge-status @(c.Status == CustomerStatus.Active ? "badge-status-active" : "badge-status-inactive")">
+                                        @c.Status
+                                    </span>
+                                </td>
+                                <td class="small">@c.AssignedUserName</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@c.ActiveOpportunitiesCount Active</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@c.CustomerId" class="btn btn-light border" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@c.CustomerId" class="btn btn-light border" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@c.CustomerId" method="post" id="del-@c.CustomerId" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="button" class="btn btn-light border text-danger" title="Delete / Deactivate" onclick="confirmAction('Are you sure you want to remove or deactivate this customer?', 'del-@c.CustomerId')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-3">
+                <partial name="_Pagination" model="Model" />
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-people"></i>
+                <h5>No Customers Found</h5>
+                <p class="small">Try adjusting your search criteria or register a new customer.</p>
+                <a asp-action="Create" class="btn btn-sm btn-primary">Create Customer</a>
+            </div>
+        }
+    </div>
+</div>

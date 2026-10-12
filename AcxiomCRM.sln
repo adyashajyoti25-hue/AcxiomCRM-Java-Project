@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09AF46D5-7B2D-48F4-BB6B-BC0929CAE6E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Domain", "src\AcxiomCRM.Domain\AcxiomCRM.Domain.csproj", "{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Infrastructure", "src\AcxiomCRM.Infrastructure\AcxiomCRM.Infrastructure.csproj", "{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Application", "src\AcxiomCRM.Application\AcxiomCRM.Application.csproj", "{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Web", "src\AcxiomCRM.Web\AcxiomCRM.Web.csproj", "{80B2D0A0-CBC7-4861-A6CD-437E092F78CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F8A2D3F3-B5A1-445D-8690-1294195CE738}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcxiomCRM.Tests", "tests\AcxiomCRM.Tests\AcxiomCRM.Tests.csproj", "{590EDF43-9C42-4B26-834D-7AEFACCE2636}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80B2D0A0-CBC7-4861-A6CD-437E092F78CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80B2D0A0-CBC7-4861-A6CD-437E092F78CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80B2D0A0-CBC7-4861-A6CD-437E092F78CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80B2D0A0-CBC7-4861-A6CD-437E092F78CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{590EDF43-9C42-4B26-834D-7AEFACCE2636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590EDF43-9C42-4B26-834D-7AEFACCE2636}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590EDF43-9C42-4B26-834D-7AEFACCE2636}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590EDF43-9C42-4B26-834D-7AEFACCE2636}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C91EA4B8-C64C-4EC3-89E4-DF4692022B7F} = {09AF46D5-7B2D-48F4-BB6B-BC0929CAE6E5}
+		{5EB3CB26-99F8-4F84-8C53-0B598C5A21C6} = {09AF46D5-7B2D-48F4-BB6B-BC0929CAE6E5}
+		{C8A40FA4-846C-4C15-BDC7-BE88C3D5D89F} = {09AF46D5-7B2D-48F4-BB6B-BC0929CAE6E5}
+		{80B2D0A0-CBC7-4861-A6CD-437E092F78CD} = {09AF46D5-7B2D-48F4-BB6B-BC0929CAE6E5}
+		{590EDF43-9C42-4B26-834D-7AEFACCE2636} = {F8A2D3F3-B5A1-445D-8690-1294195CE738}
+	EndGlobalSection
+EndGlobal

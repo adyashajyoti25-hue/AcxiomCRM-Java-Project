@@ -1,0 +1,98 @@
+@model AcxiomCRM.Application.DTOs.PagedResult<AcxiomCRM.Application.DTOs.AuditLogDto>
+@{
+    ViewData["Title"] = "Security Audit Report";
+    var filter = ViewBag.Filter as AcxiomCRM.Application.DTOs.AuditLogFilterDto;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Compliance & Security Audit Report</h3>
+        <p class="text-muted small mb-0">Forensic trail of logins, authentication failures, administrative actions, and data updates</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-sm btn-light border">Back to Hub</a>
+    </div>
+</div>
+
+<div class="crm-card mb-4">
+    <div class="crm-card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <input type="text" name="Action" class="form-control form-control-sm" placeholder="Action (e.g. Login, Create)" value="@filter?.Action" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="EntityName" class="form-control form-control-sm" placeholder="Module (e.g. Customer, User)" value="@filter?.EntityName" />
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="FromDate" class="form-control form-control-sm" value="@(filter?.FromDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="ToDate" class="form-control form-control-sm" value="@(filter?.ToDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-filter me-1"></i>Filter</button>
+                <a asp-action="AuditReport" class="btn btn-sm btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="crm-card">
+    <div class="crm-card-body p-0">
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Operator</th>
+                            <th>Action</th>
+                            <th>Module</th>
+                            <th>Record ID</th>
+                            <th>Activity Details</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var l in Model.Items)
+                        {
+                            <tr>
+                                <td class="small text-muted">@l.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="fw-semibold">@(l.UserEmail ?? "System")</td>
+                                <td>
+                                    <span class="badge @(l.Action == "Login" ? "bg-success" : l.Action == "FailedLogin" || l.Action == "Lockout" ? "bg-danger" : "bg-primary")">
+                                        @l.Action
+                                    </span>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">@l.EntityName</span></td>
+                                <td class="small font-monospace">@(l.RecordId ?? "-")</td>
+                                <td class="small">
+                                    @if (!string.IsNullOrEmpty(l.OldValue))
+                                    {
+                                        <div class="text-danger small">Old: @l.OldValue</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(l.NewValue))
+                                    {
+                                        <div class="text-success small">New: @l.NewValue</div>
+                                    }
+                                </td>
+                                <td class="small font-monospace text-muted">@(l.IpAddress ?? "127.0.0.1")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3">
+                <partial name="_Pagination" model="Model" />
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-journal-text"></i>
+                <h5>No Audit Records Found</h5>
+            </div>
+        }
+    </div>
+</div>

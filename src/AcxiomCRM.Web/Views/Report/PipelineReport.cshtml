@@ -1,0 +1,95 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Sales Pipeline Analysis";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Sales Pipeline Analysis</h3>
+        <p class="text-muted small mb-0">Comprehensive stage-wise and owner-wise pipeline breakdown and revenue weighting</p>
+    </div>
+    <a asp-action="Index" class="btn btn-sm btn-light border">Back to Hub</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 text-white" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+            <div class="text-white-50 small text-uppercase fw-semibold">Active Unclosed Pipeline</div>
+            <div class="display-6 fw-bold mt-1">@Model.TotalPipeline.ToString("C0")</div>
+            <div class="small text-white-50 mt-1">Sum of all open opportunities in scope</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 text-white" style="background: linear-gradient(135deg, #0f766e, #14b8a6);">
+            <div class="text-white-50 small text-uppercase fw-semibold">Weighted Forecast Revenue</div>
+            <div class="display-6 fw-bold mt-1">@Model.TotalWeightedPipeline.ToString("C0")</div>
+            <div class="small text-white-50 mt-1">Probability-adjusted revenue expectation</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Stage-wise -->
+    <div class="col-lg-6">
+        <div class="crm-card mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-bar-chart-steps me-2 text-primary"></i>Pipeline by Stage</h5>
+            </div>
+            <div class="crm-card-body p-0">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Deals</th>
+                            <th>Total Value</th>
+                            <th>Weighted Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.StageSummary)
+                        {
+                            <tr>
+                                <td><span class="badge bg-light text-dark border">@s.Stage</span></td>
+                                <td>@s.Count</td>
+                                <td class="fw-bold">@s.TotalAmount.ToString("C0")</td>
+                                <td class="text-success fw-bold">@s.WeightedAmount.ToString("C0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Owner-wise -->
+    <div class="col-lg-6">
+        <div class="crm-card mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-people me-2 text-info"></i>Pipeline by Representative</h5>
+            </div>
+            <div class="crm-card-body p-0">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Owner / Rep</th>
+                            <th>Deals</th>
+                            <th>Total Value</th>
+                            <th>Weighted Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.OwnerSummary)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@o.Owner</td>
+                                <td>@o.Count</td>
+                                <td class="fw-bold">@o.TotalAmount.ToString("C0")</td>
+                                <td class="text-success fw-bold">@o.WeightedAmount.ToString("C0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

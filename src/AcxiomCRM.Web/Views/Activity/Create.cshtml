@@ -1,0 +1,87 @@
+@model AcxiomCRM.Application.DTOs.ActivityCreateUpdateDto
+@{
+    ViewData["Title"] = "Log Activity";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-0">Log Customer Activity</h3>
+                <p class="text-muted small mb-0">Record interactions, call summaries, meeting notes, and sent emails</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        </div>
+
+        <div class="crm-card">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-journal-plus me-2 text-primary"></i>Activity Details</h5>
+            </div>
+            <div class="crm-card-body">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="ActivityType" class="form-label small fw-semibold text-secondary">Activity Type *</label>
+                            <select asp-for="ActivityType" class="form-select" asp-items="Html.GetEnumSelectList<ActivityType>()"></select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ActivityDate" class="form-label small fw-semibold text-secondary">Date & Time *</label>
+                            <input asp-for="ActivityDate" type="datetime-local" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm")" />
+                            <span asp-validation-for="ActivityDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Subject" class="form-label small fw-semibold text-secondary">Subject / Title *</label>
+                            <input asp-for="Subject" class="form-control" placeholder="e.g. Solution Demo & Architecture Walkthrough" />
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label small fw-semibold text-secondary">Related Customer</label>
+                            <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.CustomersList">
+                                <option value="">-- None / Prospect Lead --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="LeadId" class="form-label small fw-semibold text-secondary">Related Lead</label>
+                            <select asp-for="LeadId" class="form-select" asp-items="ViewBag.LeadsList">
+                                <option value="">-- None / Existing Customer --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="AssignedTo" class="form-label small fw-semibold text-secondary">Logged By / Assigned Rep *</label>
+                            <select asp-for="AssignedTo" class="form-select" asp-items="ViewBag.UsersList"></select>
+                            <span asp-validation-for="AssignedTo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label small fw-semibold text-secondary">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ActivityStatus>()"></select>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label small fw-semibold text-secondary">Interaction Description & Action Items</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Client questions addressed, attendees present, requested next steps..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check2-circle me-1"></i>Save Activity Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

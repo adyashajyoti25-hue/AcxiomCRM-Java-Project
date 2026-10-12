@@ -1,0 +1,140 @@
+@model AcxiomCRM.Application.DTOs.PagedResult<AcxiomCRM.Application.DTOs.OpportunityDto>
+@{
+    ViewData["Title"] = "Opportunity Pipeline";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Opportunities</h3>
+        <p class="text-muted small mb-0">Commercial sales pipeline, stages, probability weighting, and revenue outcomes</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-briefcase-fill me-1"></i> Add Opportunity
+        </a>
+    </div>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="crm-card mb-4">
+    <div class="crm-card-body p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search opportunity or customer..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="stage" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<OpportunityStage>()">
+                    <option value="">All Pipeline Stages</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<OpportunityStatus>()">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-filter me-1"></i>Filter</button>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Data Table Card -->
+<div class="crm-card">
+    <div class="crm-card-body p-0">
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Opportunity Name</th>
+                            <th>Customer</th>
+                            <th>Stage</th>
+                            <th>Amount</th>
+                            <th>Prob.</th>
+                            <th>Weighted Value</th>
+                            <th>Expected Close</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@o.OpportunityId" class="fw-semibold text-dark text-decoration-none">
+                                        @o.OpportunityName
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-controller="Customer" asp-action="Details" asp-route-id="@o.CustomerId" class="small text-muted text-decoration-none">
+                                        <i class="bi bi-building me-1"></i>@o.CustomerName
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge @(o.Stage == OpportunityStage.Won ? "bg-success" : o.Stage == OpportunityStage.Lost ? "bg-danger" : "bg-primary bg-opacity-10 text-primary")">
+                                        @o.Stage
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-dark">@o.Amount.ToString("C0")</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="small fw-semibold">@o.Probability%</span>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">@o.WeightedValue.ToString("C0")</td>
+                                <td>
+                                    <small class="@(o.Status == OpportunityStatus.Open && o.ExpectedCloseDate.Date < DateTime.Today ? "text-danger fw-bold" : "text-muted")">
+                                        @o.ExpectedCloseDate.ToString("MMM dd, yyyy")
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge-status badge-status-@o.Status.ToString().ToLower()">
+                                        @o.Status
+                                    </span>
+                                </td>
+                                <td class="small">@o.AssignedUserName</td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@o.OpportunityId" class="btn btn-light border" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@o.OpportunityId" class="btn btn-light border" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@o.OpportunityId" method="post" id="del-@o.OpportunityId" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="button" class="btn btn-light border text-danger" title="Delete" onclick="confirmAction('Are you sure you want to remove this opportunity?', 'del-@o.OpportunityId')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-3">
+                <partial name="_Pagination" model="Model" />
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-briefcase"></i>
+                <h5>No Opportunities Found</h5>
+                <p class="small">Build your sales pipeline by adding a new commercial opportunity.</p>
+                <a asp-action="Create" class="btn btn-sm btn-primary">Create Opportunity</a>
+            </div>
+        }
+    </div>
+</div>

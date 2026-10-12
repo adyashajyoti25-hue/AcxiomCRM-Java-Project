@@ -1,0 +1,166 @@
+@{
+    ViewData["Title"] = "Global CRM Search";
+    string q = ViewBag.Query ?? "";
+    var customers = ViewBag.Customers as List<AcxiomCRM.Application.DTOs.CustomerDto>;
+    var leads = ViewBag.Leads as List<AcxiomCRM.Application.DTOs.LeadDto>;
+    var opps = ViewBag.Opportunities as List<AcxiomCRM.Application.DTOs.OpportunityDto>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Search Results</h3>
+        <p class="text-muted small mb-0">Showing authorized results matching "<strong>@q</strong>"</p>
+    </div>
+</div>
+
+@if (string.IsNullOrWhiteSpace(q))
+{
+    <div class="crm-card p-5 text-center">
+        <i class="bi bi-search display-4 text-muted mb-3"></i>
+        <h5>Enter a Search Term</h5>
+        <p class="text-muted small">Type customer names, phone numbers, emails, deal terms, or lead contacts into the top search bar.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <!-- Matching Customers -->
+        <div class="col-12">
+            <div class="crm-card">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title"><i class="bi bi-people me-2 text-primary"></i>Matching Customers (@(customers?.Count ?? 0))</h5>
+                </div>
+                <div class="crm-card-body p-0">
+                    @if (customers != null && customers.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="crm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Company</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in customers)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-primary">@c.CustomerCode</td>
+                                            <td class="fw-semibold">@c.CustomerName</td>
+                                            <td>@c.Email</td>
+                                            <td>@c.Phone</td>
+                                            <td>@(c.CompanyName ?? "-")</td>
+                                            <td class="text-end">
+                                                <a asp-controller="Customer" asp-action="Details" asp-route-id="@c.CustomerId" class="btn btn-sm btn-light border">View</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center text-muted small">No customers matched "@q".</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Leads -->
+        <div class="col-12">
+            <div class="crm-card">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title"><i class="bi bi-funnel me-2 text-info"></i>Matching Leads (@(leads?.Count ?? 0))</h5>
+                </div>
+                <div class="crm-card-body p-0">
+                    @if (leads != null && leads.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="crm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var l in leads)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-primary">@l.LeadCode</td>
+                                            <td class="fw-semibold">@l.LeadName</td>
+                                            <td>@l.Email</td>
+                                            <td>@l.Phone</td>
+                                            <td><span class="badge-status badge-status-@l.Status.ToString().ToLower()">@l.Status</span></td>
+                                            <td class="text-end">
+                                                <a asp-controller="Lead" asp-action="Details" asp-route-id="@l.LeadId" class="btn btn-sm btn-light border">View</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center text-muted small">No leads matched "@q".</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Opportunities -->
+        <div class="col-12">
+            <div class="crm-card">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title"><i class="bi bi-briefcase me-2 text-warning"></i>Matching Opportunities (@(opps?.Count ?? 0))</h5>
+                </div>
+                <div class="crm-card-body p-0">
+                    @if (opps != null && opps.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="crm-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Customer</th>
+                                        <th>Stage</th>
+                                        <th>Amount</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var o in opps)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@o.OpportunityName</td>
+                                            <td>@o.CustomerName</td>
+                                            <td><span class="badge bg-primary bg-opacity-10 text-primary">@o.Stage</span></td>
+                                            <td class="fw-bold text-dark">@o.Amount.ToString("C0")</td>
+                                            <td class="text-end">
+                                                <a asp-controller="Opportunity" asp-action="Details" asp-route-id="@o.OpportunityId" class="btn btn-sm btn-light border">View</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center text-muted small">No opportunities matched "@q".</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

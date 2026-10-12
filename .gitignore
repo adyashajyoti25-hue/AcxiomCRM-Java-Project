@@ -1,0 +1,28 @@
+## Visual Studio & .NET Core
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.log
+
+## Database artifacts
+*.db
+*.db-shm
+*.db-wal
+*.mdf
+*.ldf
+
+## Environment files
+.env
+.env.local
+appsettings.Production.json
+appsettings.Local.json
+
+## Secrets & IDE
+.vscode/
+.idea/
+*.swp
+*~

@@ -1,0 +1,79 @@
+@model (List<AcxiomCRM.Application.DTOs.FollowUpDto> Items, string Title)
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">@Model.Title</h3>
+        <p class="text-muted small mb-0">Actionable pending touchpoints requiring your immediate follow-through</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-sm btn-primary"><i class="bi bi-calendar-plus me-1"></i>New Follow-Up</a>
+        <a asp-action="Index" class="btn btn-sm btn-light border">All Follow-Ups</a>
+    </div>
+</div>
+
+<div class="crm-card">
+    <div class="crm-card-body p-0">
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Subject</th>
+                            <th>Related To</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var f in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@f.FollowUpType</span>
+                                </td>
+                                <td class="fw-semibold">@f.Subject</td>
+                                <td class="small text-muted">@(f.CustomerName ?? f.LeadName ?? "-")</td>
+                                <td>
+                                    <span class="@(f.IsOverdue ? "text-danger fw-bold" : "text-dark")">
+                                        @f.FollowUpDate.ToString("MMM dd, yyyy")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-status badge-status-@f.Status.ToString().ToLower()">@f.Status</span>
+                                </td>
+                                <td class="small">@f.AssignedUserName</td>
+                                <td class="text-end">
+                                    <form asp-action="Complete" asp-route-id="@f.FollowUpId" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success" title="Mark Done">
+                                            <i class="bi bi-check-lg me-1"></i>Complete
+                                        </button>
+                                    </form>
+                                    <a asp-action="Edit" asp-route-id="@f.FollowUpId" class="btn btn-sm btn-light border ms-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-check-circle text-success"></i>
+                <h5>No Tasks Found</h5>
+                <p class="small">Great job! There are no records in this list.</p>
+                <a asp-action="Index" class="btn btn-sm btn-primary">Go to Follow-Up List</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,36 @@
+@model dynamic
+@{
+    int pageIndex = Model.PageIndex;
+    int totalPages = Model.TotalPages;
+    bool hasPrevious = Model.HasPreviousPage;
+    bool hasNext = Model.HasNextPage;
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation" class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted small">
+            Page <strong>@pageIndex</strong> of <strong>@totalPages</strong> (Total: @Model.TotalCount records)
+        </div>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @(!hasPrevious ? "disabled" : "")">
+                <a class="page-link" href="?page=@(pageIndex - 1)&search=@Context.Request.Query["search"]&status=@Context.Request.Query["status"]">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+
+            @for (int i = Math.Max(1, pageIndex - 2); i <= Math.Min(totalPages, pageIndex + 2); i++)
+            {
+                <li class="page-item @(i == pageIndex ? "active" : "")">
+                    <a class="page-link" href="?page=@i&search=@Context.Request.Query["search"]&status=@Context.Request.Query["status"]">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(!hasNext ? "disabled" : "")">
+                <a class="page-link" href="?page=@(pageIndex + 1)&search=@Context.Request.Query["search"]&status=@Context.Request.Query["status"]">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

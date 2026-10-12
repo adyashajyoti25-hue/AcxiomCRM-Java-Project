@@ -1,0 +1,113 @@
+@model AcxiomCRM.Application.DTOs.LeadConvertDto
+@{
+    ViewData["Title"] = "Convert Lead";
+    var lead = ViewBag.Lead as AcxiomCRM.Application.DTOs.LeadDto;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-0">Convert Qualified Lead</h3>
+                <p class="text-muted small mb-0">Transform prospect into an active Customer and commercial Opportunity</p>
+            </div>
+            <a asp-action="Details" asp-route-id="@Model.LeadId" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        </div>
+
+        @if (lead != null)
+        {
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-primary mb-1">@lead.LeadCode</span>
+                        <h5 class="fw-bold mb-1">@lead.LeadName</h5>
+                        <div class="small text-muted">
+                            <span><i class="bi bi-building me-1"></i>@(lead.CompanyName ?? "-")</span> &bull;
+                            <span><i class="bi bi-envelope me-1"></i>@lead.Email</span> &bull;
+                            <span><i class="bi bi-telephone me-1"></i>@lead.Phone</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="small text-muted">Estimated Value:</div>
+                        <div class="fs-5 fw-bold text-success">@lead.ExpectedValue.ToString("C0")</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="crm-card">
+            <div class="crm-card-header bg-success bg-opacity-10 text-success">
+                <h5 class="crm-card-title text-success"><i class="bi bi-check-circle-fill me-2"></i>Conversion Workflow Configuration</h5>
+            </div>
+            <div class="crm-card-body">
+                <form asp-action="Convert" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="LeadId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="alert alert-secondary small d-flex gap-2 align-items-center mb-4">
+                        <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                        <div>
+                            A new <strong>Customer Master</strong> record will automatically be provisioned using this lead's contact details, phone, and company name.
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" asp-for="CreateOpportunity" id="chkCreateOpp">
+                        <label class="form-check-label fw-bold" for="chkCreateOpp">Also create a Sales Opportunity in pipeline</label>
+                    </div>
+
+                    <div id="oppFieldsContainer" class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="OpportunityName" class="form-label small fw-semibold text-secondary">Opportunity Name</label>
+                                <input asp-for="OpportunityName" class="form-control" />
+                                <span asp-validation-for="OpportunityName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="OpportunityAmount" class="form-label small fw-semibold text-secondary">Opportunity Amount ($) *</label>
+                                <input asp-for="OpportunityAmount" type="number" step="0.01" class="form-control" />
+                                <span asp-validation-for="OpportunityAmount" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ExpectedCloseDate" class="form-label small fw-semibold text-secondary">Expected Close Date *</label>
+                                <input asp-for="ExpectedCloseDate" type="date" class="form-control" value="@(DateTime.Today.AddDays(30).ToString("yyyy-MM-dd"))" />
+                                <span asp-validation-for="ExpectedCloseDate" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="AssignedTo" class="form-label small fw-semibold text-secondary">Assign Account & Deal To</label>
+                                <select asp-for="AssignedTo" class="form-select" asp-items="ViewBag.UsersList">
+                                    <option value="">-- Keep Current Lead Owner --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Remarks" class="form-label small fw-semibold text-secondary">Conversion Remarks / Notes</label>
+                        <textarea asp-for="Remarks" class="form-control" rows="2" placeholder="Reasons for qualification, client budget confirmation..."></textarea>
+                    </div>
+
+                    <div class="pt-3 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Details" asp-route-id="@Model.LeadId" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-success px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-arrow-repeat me-1"></i> Complete Conversion
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("chkCreateOpp").addEventListener("change", function () {
+            document.getElementById("oppFieldsContainer").style.display = this.checked ? "block" : "none";
+        });
+    </script>
+}

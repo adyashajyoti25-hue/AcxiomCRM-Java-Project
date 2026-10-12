@@ -1,0 +1,117 @@
+@model AcxiomCRM.Application.DTOs.OpportunityDto
+@{
+    ViewData["Title"] = Model.OpportunityName;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h3 class="fw-bold text-dark mb-0">@Model.OpportunityName</h3>
+            <span class="badge @(Model.Stage == OpportunityStage.Won ? "bg-success" : Model.Stage == OpportunityStage.Lost ? "bg-danger" : "bg-primary")">
+                @Model.Stage
+            </span>
+            <span class="badge-status badge-status-@Model.Status.ToString().ToLower()">
+                @Model.Status
+            </span>
+        </div>
+        <p class="text-muted small mb-0">Commercial deal profile, stage progression, and probability forecasting</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.OpportunityId" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a asp-controller="FollowUp" asp-action="Create" asp-route-opportunityId="@Model.OpportunityId" class="btn btn-sm btn-info text-white">
+            <i class="bi bi-calendar-plus me-1"></i> Follow-Up
+        </a>
+        <a asp-action="Index" class="btn btn-sm btn-light border">Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Value Highlight Card -->
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card">
+            <div class="kpi-title">Deal Amount</div>
+            <div class="kpi-value text-primary">@Model.Amount.ToString("C0")</div>
+            <div class="small text-muted">Total Contract Value</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card">
+            <div class="kpi-title">Win Probability</div>
+            <div class="kpi-value text-info">@Model.Probability%</div>
+            <div class="small text-muted">Confidence Level</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card">
+            <div class="kpi-title">Weighted Value</div>
+            <div class="kpi-value text-success">@Model.WeightedValue.ToString("C0")</div>
+            <div class="small text-muted">Amount &times; Probability</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-card">
+            <div class="kpi-title">Target Close Date</div>
+            <div class="kpi-value text-dark fs-4">@Model.ExpectedCloseDate.ToString("MMM dd, yyyy")</div>
+            <div class="small @(Model.Status == OpportunityStatus.Open && Model.ExpectedCloseDate.Date < DateTime.Today ? "text-danger fw-bold" : "text-muted")">
+                @(Model.Status == OpportunityStatus.Open && Model.ExpectedCloseDate.Date < DateTime.Today ? "Overdue Target" : "Projected Close")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="crm-card mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-info-circle me-2 text-primary"></i>Deal Overview</h5>
+            </div>
+            <div class="crm-card-body">
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-5 text-muted">Customer Account:</dt>
+                    <dd class="col-sm-7 fw-semibold">
+                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerId" class="text-decoration-none">
+                            <i class="bi bi-building me-1"></i>@Model.CustomerName
+                        </a>
+                    </dd>
+
+                    @if (Model.LeadId.HasValue)
+                    {
+                        <dt class="col-sm-5 text-muted">Source Lead:</dt>
+                        <dd class="col-sm-7">
+                            <a asp-controller="Lead" asp-action="Details" asp-route-id="@Model.LeadId.Value" class="text-decoration-none">
+                                <i class="bi bi-funnel me-1"></i>Lead ID #@Model.LeadId.Value
+                            </a>
+                        </dd>
+                    }
+
+                    <dt class="col-sm-5 text-muted">Pipeline Stage:</dt>
+                    <dd class="col-sm-7"><span class="badge bg-primary bg-opacity-10 text-primary">@Model.Stage</span></dd>
+
+                    <dt class="col-sm-5 text-muted">Deal Status:</dt>
+                    <dd class="col-sm-7"><span class="badge-status badge-status-@Model.Status.ToString().ToLower()">@Model.Status</span></dd>
+
+                    <dt class="col-sm-5 text-muted">Assigned Owner:</dt>
+                    <dd class="col-sm-7 fw-medium">@Model.AssignedUserName</dd>
+
+                    <dt class="col-sm-5 text-muted">Created Date:</dt>
+                    <dd class="col-sm-7">@Model.CreatedDate.ToString("MMM dd, yyyy")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="crm-card mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-journal-text me-2 text-secondary"></i>Commercial Notes</h5>
+            </div>
+            <div class="crm-card-body">
+                <div class="p-3 bg-light rounded-3 small text-secondary">
+                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "No notes recorded for this opportunity." : Model.Notes)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

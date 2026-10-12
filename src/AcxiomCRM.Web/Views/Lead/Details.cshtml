@@ -1,0 +1,104 @@
+@model AcxiomCRM.Application.DTOs.LeadDto
+@{
+    ViewData["Title"] = Model.LeadName;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h3 class="fw-bold text-dark mb-0">@Model.LeadName</h3>
+            <span class="badge bg-primary bg-opacity-10 text-primary">@Model.LeadCode</span>
+            <span class="badge-status badge-status-@Model.Status.ToString().ToLower()">
+                @Model.Status
+            </span>
+        </div>
+        <p class="text-muted small mb-0">Lead pipeline tracking, priority ranking, and qualification status</p>
+    </div>
+    <div class="d-flex gap-2">
+        @if (Model.Status != LeadStatus.Converted)
+        {
+            <a asp-action="Convert" asp-route-id="@Model.LeadId" class="btn btn-sm btn-success">
+                <i class="bi bi-arrow-repeat me-1"></i> Convert to Customer
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.LeadId" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil me-1"></i> Edit
+            </a>
+        }
+        else
+        {
+            <span class="badge bg-success bg-opacity-10 text-success border py-2 px-3 align-self-center">Converted to Customer</span>
+        }
+        <a asp-controller="FollowUp" asp-action="Create" asp-route-leadId="@Model.LeadId" class="btn btn-sm btn-info text-white">
+            <i class="bi bi-calendar-plus me-1"></i> Follow-Up
+        </a>
+        <a asp-action="Index" class="btn btn-sm btn-light border">Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="crm-card h-100 mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-funnel me-2 text-primary"></i>Lead Details</h5>
+            </div>
+            <div class="crm-card-body">
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-5 text-muted">Company:</dt>
+                    <dd class="col-sm-7 fw-semibold">@(Model.CompanyName ?? "-")</dd>
+
+                    <dt class="col-sm-5 text-muted">Email:</dt>
+                    <dd class="col-sm-7"><a href="mailto:@Model.Email" class="text-decoration-none">@Model.Email</a></dd>
+
+                    <dt class="col-sm-5 text-muted">Phone:</dt>
+                    <dd class="col-sm-7"><a href="tel:@Model.Phone" class="text-decoration-none">@Model.Phone</a></dd>
+
+                    <dt class="col-sm-5 text-muted">Lead Source:</dt>
+                    <dd class="col-sm-7"><span class="badge bg-light text-dark border">@Model.Source</span></dd>
+
+                    <dt class="col-sm-5 text-muted">Priority:</dt>
+                    <dd class="col-sm-7">
+                        <span class="badge @(Model.Priority == LeadPriority.High ? "bg-danger bg-opacity-10 text-danger" : "bg-warning bg-opacity-10 text-warning")">
+                            @Model.Priority
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">Expected Value:</dt>
+                    <dd class="col-sm-7 fw-bold text-success">@(Model.ExpectedValue > 0 ? Model.ExpectedValue.ToString("C0") : "-")</dd>
+
+                    <dt class="col-sm-5 text-muted">Assigned Exec:</dt>
+                    <dd class="col-sm-7 fw-medium text-dark">@Model.AssignedUserName</dd>
+
+                    <dt class="col-sm-5 text-muted">Created Date:</dt>
+                    <dd class="col-sm-7">@Model.CreatedDate.ToString("MMM dd, yyyy")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="crm-card h-100 mb-0">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title"><i class="bi bi-journal-text me-2 text-secondary"></i>Notes & Follow-ups</h5>
+            </div>
+            <div class="crm-card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-semibold">Prospect Notes:</label>
+                    <div class="p-3 bg-light rounded-3 small text-secondary">
+                        @(string.IsNullOrWhiteSpace(Model.Notes) ? "No notes recorded yet." : Model.Notes)
+                    </div>
+                </div>
+
+                @if (Model.ConvertedCustomerId.HasValue)
+                {
+                    <div class="alert alert-success d-flex align-items-center gap-2 mb-0 small">
+                        <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                        <div>
+                            This lead was converted into Customer ID <strong>#@Model.ConvertedCustomerId</strong>.
+                            <a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.ConvertedCustomerId.Value" class="alert-link ms-1">View Customer Profile &rarr;</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
